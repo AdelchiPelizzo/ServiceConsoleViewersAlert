@@ -1,0 +1,63 @@
+<!--
+ - Created by Adelchi on 01/04/2022.
+ -->
+
+<aura:component description="consoleWorkspace" implements="flexipage:availableForAllPageTypes, force:hasRecordId, force:hasSObjectName" controller="platformEventPublisher" access="global" >
+    <lightning:workspaceAPI aura:id="workspace"/>
+    <aura:handler event="lightning:tabFocused" action="{! c.onTabFocused }"/>
+    <aura:handler event="lightning:tabClosed" action="{! c.onTabClosed }"/>
+    <aura:handler event="lightning:tabCreated" action="{! c.onTabCreated }"/>
+    <lightning:empApi aura:id="empApi"/>
+    <lightning:input aura:id="channel" label="channel" name="channel" type="text" value="/event/caseRecordIsBeingViewed__e" class="slds-hide"/>
+    <lightning:input aura:id="channelU" label="channelU" name="channelU" type="text" value="/event/caseRecordIsNotViewed__e" class="slds-hide"/>
+    <aura:attribute name="caseNumber" type="String"/>
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="sObjectName" type="String" />
+    <aura:attribute name="userName" type="String" />
+    <aura:attribute name="subscription" type="Map" />
+    <aura:attribute name="subscriptionU" type="Map" />
+    <aura:attribute name="evtInfo"  type="Object[]" access="global"  />
+    <aura:attribute name="tabFocus" type="object" access="global" />
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}"/>
+    <div>
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped" aria-label="Example table of Opportunities with striped rows">
+            <thead>
+            <tr class="slds-line-height_reset">
+                <th class="" scope="col">
+                    <div class="slds-truncate" title="nr">Id</div>
+                </th>
+                <th class="" scope="col">
+                    <div class="slds-truncate" title="Viewer Name">Viewer Name</div>
+                </th>
+                <th class="" scope="col">
+                    <div class="slds-truncate" title="Case Number">Case Number</div>
+                </th>
+                <th class="" scope="col">
+                    <div class="slds-truncate" title="Event created time">Started at</div>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <aura:iteration items="{!v.evtInfo}" var="item" indexVar="i">
+                <aura:if isTrue="{!v.userName != item.data.payload.viewerName__c}">
+                    <tr class="slds-hint-parent">
+                        <td>{!i+1}</td>
+                        <td >
+                            <div class="slds-truncate" >
+                                <p>{!item.data.payload.viewerName__c}</p></div>
+                        </td>
+                        <td >
+                            <div class="slds-truncate" >
+                                <p>{!item.data.payload.caseNumber__c}</p></div>
+                        </td>
+                        <td >
+                            <div class="slds-truncate" >
+                                <p><lightning:formattedDateTime  hour="2-digit" minute="2-digit"  value="{!item.data.payload.CreatedDate}" /></p></div>
+                        </td>
+                    </tr>
+                </aura:if>
+            </aura:iteration>
+            </tbody>
+        </table>
+    </div>
+</aura:component>
