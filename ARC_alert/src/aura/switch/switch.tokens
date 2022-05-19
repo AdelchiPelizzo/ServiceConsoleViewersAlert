@@ -1,0 +1,8 @@
+<!--
+ - Created by Adelchi on 12/04/2022.
+ -->
+
+<aura:tokens>
+    <aura:token name="on" value="Arial, sans-serif"/>
+    <aura:token name="off" value="bold"/>
+</aura:tokens>

@@ -21,24 +21,50 @@
         });
 
         empApi.subscribe(channelu, replayId, $A.getCallback(eventReceived => {
+            // let existEvent = component.get("v.evtInfo");
             // console.log('Received event unsubscription '+ JSON.stringify(eventReceived));
-            for(let i = 0; i < existingEvents.length; i++){
-                if(existingEvents[i].data.payload.recordId__c == eventReceived.data.payload.recordId__c &&  existingEvents[i].data.payload.viewerId__c == eventReceived.data.payload.viewerId__c){
-                    existingEvents.pop(existingEvents[i]);
-                    component.set("v.evtInfo", existingEvents);
-                    console.log("existingEvents.length unsub "+i+' '+existingEvents.length);
-                }
-                if (eventReceived.data.payload.viewerId__c != userId && existingEvents[i].data.payload.recordId__c == eventReceived.data.payload.recordId__c && existingEvents[i].data.payload.viewerId__c == eventReceived.data.payload.viewerId__c){
-
-                    let toastEvent = $A.get("e.force:showToast");
+            // if(existingEvents.length > 0){
+                for(let i = 0; i < existingEvents.length; i++){let toastEvent = $A.get("e.force:showToast");
                     toastEvent.setParams({
-                        "title": 'This Case nr '+ existingEvents[i].data.payload.caseNumber__c,
-                        "message": 'Is no more viewed  by '+existingEvents[i].data.payload.viewerName__c,
-                        "mode": "sticky"
+                        title: 'This Case nr '+ existingEvents[i].data.payload.caseNumber__c,
+                        message: 'Is no more viewed  by '+existingEvents[i].data.payload.viewerName__c,
+                        mode: "sticky",
+                        type: "success",
                     });
-                    toastEvent.fire();
+                    console.log("round "+i);
+                    // let index = existingEvents.indexOf((existingEvents[i]));
+                    if(existingEvents[i].data.payload.caseNumber__c == eventReceived.data.payload.caseNumber__c
+                        && existingEvents[i].data.payload.viewerName__c == eventReceived.data.payload.viewerName__c){
+                        console.log("splicing ..."+i);
+                        existingEvents.splice(i, 1);
+                        component.set("v.evtInfo", existingEvents);
+                        //
+                        //
+                        //     console.log("event list length "+existingEvents.length);
+                        // console.log("remove existing event > case "+i+" "+existingEvents[i].data.payload.caseNumber__c);
+                        // console.log("remove event received > case "+i+" "+eventReceived.data.payload.caseNumber__c);
+                        // console.log("remove existing event > viewer "+i+" "+existingEvents[i].data.payload.viewerName__c);
+                        // console.log("remove event received > viewer "+i+" "+eventReceived.data.payload.viewerName__c);
+                        //     if (i > 0) {
+                        // }
+
+                        // console.log(" record viewed by "+existingEvents[i].data.payload.viewerName__c);
+                        // console.log(" record removed ");
+                        // existingEvents.pop(existingEvents[i]);
+                        //existingEvents.pop(existingEvents[i-1]); edited !!
+                    }
+                    if ( existingEvents[i].data.payload.viewerId__c == userId ){
+                        let onOff = component.get("v.switch");
+                        if(onOff == "on" ){
+                            let getSound = $A.get('$Resource.alarmEditingOff');
+                            let playSound = new Audio(getSound);
+                            playSound.play();
+                            toastEvent.fire();
+                        }
+                    }
+                    // console.log("number of existing events "+existingEvents.length);
                 }
-            }
+            // }
         }))
             .then(subscription => {
                 component.set('v.subscriptionU', subscription);
@@ -46,18 +72,19 @@
         empApi.subscribe(channel, replayId, $A.getCallback(eventReceived => {
             existingEvents.push(eventReceived);
             let eventsUpdated = existingEvents;
-            component.set("v.evtInfo", existingEvents);
             let eventInfo = eventReceived;
             let csNum = eventInfo.data.payload.caseNumber__c;
             let usNam = eventInfo.data.payload.viewerName__c;
             let recId = eventInfo.data.payload.recordId__c;
             let usrId = eventInfo.data.payload.viewerId__c;
-            if(existingEvents.length === 0){
-                existingEvents.push(JSON.stringify(eventReceived));
-            }else{
-                for(let i = 0; i < existingEvents[i].length; i++){
-                    if( eventReceived.data.payload.recordId__c != recId || existingEvents[i].data.payload.viewerId__c != userId){
-                        existingEvents.push(JSON.stringify(eventReceived));
+            // if(existingEvents.length === 0){
+            //     existingEvents.push(eventReceived);
+            // }else{
+            //     for(let i = 0; i < existingEvents[i].length; i++){
+                    // if( eventReceived.data.payload.recordId__c != recId || existingEvents[i].data.payload.viewerId__c != userId){
+                        console.log("open record event received "+JSON.stringify(eventReceived));
+                        // existingEvents.push(eventReceived);
+                        component.set("v.evtInfo", existingEvents);
                         //         let toastEvent = $A.get("e.force:showToast");
                         //         toastEvent.setParams({
                         //             "title": '230 Alert! This '+objName+' nr '+csNum,
@@ -66,9 +93,9 @@
                         //         });
                         //         toastEvent.fire();
                         //
-                    }
-                }
-            }
+                    // }
+                // }
+            // }
             console.log("existingEvents.length sub"+existingEvents.length);
 
 
@@ -122,16 +149,12 @@
     },
 
     onTabFocused : function(component, event, helper) {
-        console.log("Tab Focused");
         var focusedTabId = event.getParam('currentTabId');
-        console.log("Tab Focused"+focusedTabId);
         var workspaceAPI = component.find("workspace");
         workspaceAPI.getTabInfo({
             tabId : focusedTabId
         }).then(function(response) {
-            console.log("response "+response);
             component.set("v.tabFocus",  response);
-            console.log("focuse component onFocus" +JSON.stringify(response));
 
         }).catch(function(error) {
             console.log(error);
@@ -139,20 +162,19 @@
     },
 
     onTabClosed : function(component, event, helper) {
-        console.log("Tab closed: " +event.getParam('tabId'));
         let focusRecord = component.get("v.tabFocus");
+        let workspaceAPI = component.find("workspace");
         let checkOpenedRecords = component.get("v.evtInfo");
         let userId = $A.get("$SObjectType.CurrentUser.Id");
         let tId = event.getParam("tabId");
-        let workspaceAPI = component.find("workspace");
         let recordId;
         let getCaseNr = component.get("c.getCaseNumber");
         let UserName = component.get("v.userName");
         let unPublishEvent = component.get("c.unPublishCaseViewing");
         // workspaceAPI.getTabInfo({tabId: tId}).then((result) => {
-            // console.log(JSON.stringify(result));
             // alert(JSON.stringify(focusRecord));
             recordId = focusRecord.pageReference.attributes.recordId;
+        // alert("recordId "+recordId);
             // recordId = result.pageReference.attributes.recordId;
             // component.set("v.recordId", recordId);
             getCaseNr.setParams({
@@ -392,8 +414,12 @@
                     toastEvent.setParams({
                         "title": 'This Case Nr '+existingEvents[i].data.payload.caseNumber__c,
                         "message": 'Is currently viewed by '+existingEvents[i].data.payload.viewerName__c,
-                        "mode": "sticky"
+                        "mode": "sticky",
+                        type: "warning"
                     });
+                    let getSound = $A.get('$Resource.alarmEditing');
+                    let playSound = new Audio(getSound);
+                    playSound.play();
                     toastEvent.fire();
                     }
                 }
@@ -497,6 +523,31 @@
         //     url: '#/sObject/001R0000003HgssIAC/view',
         //     focus: true
         // });
+    },
+
+    cleanUp : function(component, event, helper){
+        component.set("v.showConfirmDialog", true);
+    },
+
+    handleConfirmDialogYes : function(component, event, helper) {
+        component.set("v.evtInfo", []);
+        component.set('v.showConfirmDialog', false);
+    },
+
+    handleConfirmDialogNo : function(component, event, helper) {
+        component.set('v.showConfirmDialog', false);
+    },
+
+    notificationSwitch : function(component,event){
+        let elm = component.find("onOff");
+        $A.util.toggleClass(elm,"on");
+        let onOff = component.get("v.switch");
+        if(onOff == "off"){
+            component.set("v.switch", "on");
+        }
+        if(onOff == "on"){
+            component.set("v.switch", "off");
+        }
     }
 
 });

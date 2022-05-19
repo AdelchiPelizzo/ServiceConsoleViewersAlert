@@ -18,11 +18,27 @@
     <aura:attribute name="subscriptionU" type="Map" />
     <aura:attribute name="evtInfo"  type="Object[]" access="global"  />
     <aura:attribute name="tabFocus" type="object" access="global" />
+    <aura:attribute name="switch" type="string" access="global" default="off" />
+    <aura:attribute name="showConfirmDialog" type="Boolean" default="false" />
     <aura:handler name="init" value="{!this}" action="{!c.onInit}"/>
-    <div>
-        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped" aria-label="Example table of Opportunities with striped rows">
+    <aura:if isTrue="{!v.showConfirmDialog}">
+        <div class = "center">
+            <div role="dialog" class="slds-modal slds-fade-in-open" >
+                <div class="slds-modal__container">
+                    <div class="slds-align-middle slds-text-color_destructive slds-m-bottom_x-small slds-m-top_large slds-color__background_gray-1 opacity">Are you sure you want to Reset Viewers' List ?</div>
+                    <footer class="transparent slds-align_absolute-center">
+                        <lightning:button name='No' label='No' onclick='{!c.handleConfirmDialogNo}'/>
+                        <lightning:button variant="brand" name='Yes' label='Yes' onclick='{!c.handleConfirmDialogYes}'/>
+                    </footer>
+                </div>
+            </div>
+            <div class="slds-backdrop"></div>
+        </div>
+    </aura:if>
+    <div class="slds-scrollable">
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered" aria-label="Viewers currently active">
             <thead>
-            <tr class="slds-line-height_reset">
+            <tr class="slds-text-title">
                 <th class="" scope="col">
                     <div class="slds-truncate" title="nr">Id</div>
                 </th>
@@ -37,27 +53,45 @@
                 </th>
             </tr>
             </thead>
-            <tbody>
-            <aura:iteration items="{!v.evtInfo}" var="item" indexVar="i">
-                <aura:if isTrue="{!v.userName != item.data.payload.viewerName__c}">
+            <tbody >
+            <aura:iteration items="{!v.evtInfo}" var="item" indexVar="i" >
+                <aura:if isTrue="{!v.userName != item.data.payload.viewerName__c}" >
                     <tr class="slds-hint-parent">
                         <td>{!i+1}</td>
                         <td >
                             <div class="slds-truncate" >
-                                <p>{!item.data.payload.viewerName__c}</p></div>
+                                <p>{!item.data.payload.viewerName__c}</p>
+                            </div>
                         </td>
                         <td >
                             <div class="slds-truncate" >
-                                <p>{!item.data.payload.caseNumber__c}</p></div>
+                                <p>{!item.data.payload.caseNumber__c}</p>
+                            </div>
                         </td>
                         <td >
                             <div class="slds-truncate" >
-                                <p><lightning:formattedDateTime  hour="2-digit" minute="2-digit"  value="{!item.data.payload.CreatedDate}" /></p></div>
+                                <p><lightning:formattedDateTime  hour="2-digit" minute="2-digit"  value="{!item.data.payload.CreatedDate}" /></p>
+                            </div>
                         </td>
                     </tr>
                 </aura:if>
             </aura:iteration>
             </tbody>
         </table>
+    </div>
+    <div class="slds-docked_container transparent slds-m-bottom_medium">
+        <div class="slds-m-right_xx-large">
+            <lightning:buttonIcon iconName="utility:delete"  alternativeText="Delete" variant="bare" tooltip="Remove Viewers From List" onclick="{!c.cleanUp}"/>
+        </div>
+        <div class="slds-m-right_large" ></div>
+        <div class="slds-m-right_xx-large" ></div>
+        <div class="slds-m-right_xx-large" ></div>
+        <div class=" slds-m-right_xx-large" ></div>
+        <div class=" slds-m-right_xx-large" ></div>
+        <lightning:buttonIcon aura:id="onOff" iconName="utility:power"  alternativeText="Switch" variant="bare" tooltip = "Turn ON/OFF notifications when records are no more viewed by users." onclick="{!c.notificationSwitch}"/>
+        <div class="tooltip slds-var-m-left_x-small">
+            <span class="tooltipText slds-text-body_small">Current position {!v.switch}</span>
+            <div class="slds-button slds-button_icon slds-icon-text-success" title = "Status">{!v.switch}</div>
+        </div>
     </div>
 </aura:component>

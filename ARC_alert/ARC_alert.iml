@@ -25,6 +25,10 @@
                             <option name="selected" value="true" />
                           </MetadataEntry>
                           <MetadataEntry>
+                            <option name="name" value="platformEventPublisherTest" />
+                            <option name="selected" value="true" />
+                          </MetadataEntry>
+                          <MetadataEntry>
                             <option name="name" value="publishCaseViewingEvent" />
                             <option name="selected" value="true" />
                           </MetadataEntry>
@@ -42,6 +46,10 @@
                           </MetadataEntry>
                           <MetadataEntry>
                             <option name="name" value="ServiceConsoleC" />
+                            <option name="selected" value="true" />
+                          </MetadataEntry>
+                          <MetadataEntry>
+                            <option name="name" value="switch" />
                             <option name="selected" value="true" />
                           </MetadataEntry>
                         </list>
