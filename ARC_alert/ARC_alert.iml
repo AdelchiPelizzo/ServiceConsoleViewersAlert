@@ -17,6 +17,14 @@
                       <option name="entries">
                         <list>
                           <MetadataEntry>
+                            <option name="name" value="ConsoleUtility" />
+                            <option name="selected" value="true" />
+                          </MetadataEntry>
+                          <MetadataEntry>
+                            <option name="name" value="ConsoleUtilityTest" />
+                            <option name="selected" value="true" />
+                          </MetadataEntry>
+                          <MetadataEntry>
                             <option name="name" value="platfEventsPublisher" />
                             <option name="selected" value="true" />
                           </MetadataEntry>
@@ -41,6 +49,22 @@
                       <option name="entries">
                         <list>
                           <MetadataEntry>
+                            <option name="name" value="FirstEmailReply" />
+                            <option name="selected" value="true" />
+                          </MetadataEntry>
+                        </list>
+                      </option>
+                      <option name="name" value="ApexTrigger" />
+                      <option name="wildcard" value="false" />
+                    </MetadataType>
+                    <MetadataType>
+                      <option name="entries">
+                        <list>
+                          <MetadataEntry>
+                            <option name="name" value="alertDraftEmail" />
+                            <option name="selected" value="true" />
+                          </MetadataEntry>
+                          <MetadataEntry>
                             <option name="name" value="consoleWorkspace" />
                             <option name="selected" value="true" />
                           </MetadataEntry>
@@ -55,6 +79,18 @@
                         </list>
                       </option>
                       <option name="name" value="AuraDefinitionBundle" />
+                      <option name="wildcard" value="false" />
+                    </MetadataType>
+                    <MetadataType>
+                      <option name="entries">
+                        <list>
+                          <MetadataEntry>
+                            <option name="name" value="checkForEmailDraft" />
+                            <option name="selected" value="true" />
+                          </MetadataEntry>
+                        </list>
+                      </option>
+                      <option name="name" value="LightningComponentBundle" />
                       <option name="wildcard" value="false" />
                     </MetadataType>
                   </set>
